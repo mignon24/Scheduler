@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OBSERVATION — Project Scheduler</title>
+  <meta name="theme-color" content="#090406" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">O</div>
+        <div>
+          <div class="brand-title">OBSERVATION</div>
+          <div class="brand-subtitle">PROJECT SCHEDULER</div>
+        </div>
+      </div>
+
+      <nav class="view-tabs" aria-label="View switcher">
+        <button class="tab-btn active" data-view="calendar">CALENDAR</button>
+        <button class="tab-btn" data-view="timeline">TIMELINE</button>
+      </nav>
+
+      <div class="top-actions">
+        <button id="todayBtn" class="ghost-btn">TODAY</button>
+        <button id="addScheduleBtn" class="primary-btn">+ ADD SCHEDULE</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="sidebar">
+        <section class="sidebar-section">
+          <div class="section-label">PROJECT</div>
+          <div class="project-info">
+            <span>XR CONTENT DESIGN WORKSHOP</span>
+            <strong>2026.10 — 2026.12</strong>
+          </div>
+        </section>
+
+        <section class="sidebar-section">
+          <div class="section-label">CATEGORY</div>
+          <div id="categoryFilters" class="filter-list"></div>
+        </section>
+
+        <section class="sidebar-section">
+          <div class="section-label">POSITION</div>
+          <div id="positionFilters" class="filter-list"></div>
+        </section>
+
+        <section class="sidebar-section">
+          <div class="section-label">STATUS</div>
+          <div class="status-legend">
+            <span><i class="status-dot not-started"></i>NOT STARTED</span>
+            <span><i class="status-dot in-progress"></i>IN PROGRESS</span>
+            <span><i class="status-dot review"></i>REVIEW</span>
+            <span><i class="status-dot done"></i>DONE</span>
+          </div>
+        </section>
+
+        <section class="sidebar-section mini-help">
+          <div class="section-label">TIP</div>
+          <p>날짜 칸을 더블클릭하면 해당 날짜로 새 일정을 만들 수 있습니다.</p>
+        </section>
+      </aside>
+
+      <section class="content">
+        <div class="content-toolbar">
+          <div class="project-pill">OBSERVATION / XR PRODUCTION</div>
+          <div class="summary-chips">
+            <div class="summary-chip">
+              <span>NEXT DEADLINE</span>
+              <strong id="nextDeadlineText">—</strong>
+            </div>
+            <div class="summary-chip">
+              <span>VISIBLE TASKS</span>
+              <strong id="visibleTaskCount">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <section id="calendarView" class="view-panel active">
+          <div class="paper-sheet">
+            <header class="paper-header">
+              <div class="liquid-tech-badge">
+                <span>SAFE · CORE © TIMELINE</span>
+                <span>SET 02 ↗</span>
+              </div>
+              <h1 id="monthLargeTitle" class="paper-hero-title">Oct</h1>
+
+              <div class="paper-subbar">
+                <div id="monthNumber" class="paper-month-num">10</div>
+                <div class="paper-nav">
+                  <button id="prevMonthBtn" class="paper-arrow-btn" aria-label="Previous month">←</button>
+                  <button id="nextMonthBtn" class="paper-arrow-btn" aria-label="Next month">→</button>
+                  <span class="paper-nav-label">Calendar</span>
+                </div>
+                <div class="paper-memo-label">Memo <span>--</span></div>
+              </div>
+
+              <div class="paper-memo-lines" id="paperMemoLines">
+                <div class="paper-memo-line" contenteditable="true" data-line="1"></div>
+                <div class="paper-memo-line" contenteditable="true" data-line="2"></div>
+                <div class="paper-memo-line" contenteditable="true" data-line="3"></div>
+                <div class="paper-memo-line" contenteditable="true" data-line="4"></div>
+              </div>
+
+              <div class="paper-weekday-row">
+                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+              </div>
+            </header>
+
+            <div id="calendarGrid" class="paper-calendar-grid"></div>
+
+            <footer class="paper-footer">
+              <span>©2026. OBSERVATION STUDIO. All rights reserved.</span>
+            </footer>
+          </div>
+        </section>
+
+        <section id="timelineView" class="view-panel">
+          <div class="timeline-head">
+            <div>
+              <div class="section-label">PROJECT TIMELINE</div>
+              <h2>Milestones & production flow</h2>
+            </div>
+            <div class="timeline-note">현재 필터가 그대로 적용됩니다.</div>
+          </div>
+          <div id="timelineList" class="timeline-list"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="drawerBackdrop" class="drawer-backdrop"></div>
+
+  <aside id="scheduleDrawer" class="drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <div>
+        <div id="drawerEyebrow" class="drawer-eyebrow">NEW SCHEDULE</div>
+        <h2 id="drawerTitle">Add schedule</h2>
+      </div>
+      <button id="closeDrawerBtn" class="icon-btn" aria-label="Close">×</button>
+    </div>
+
+    <form id="scheduleForm" class="schedule-form">
+      <input type="hidden" id="scheduleId" />
+
+      <label>
+        <span>TITLE</span>
+        <input id="titleInput" type="text" placeholder="예: Storyboard Final" required maxlength="60" />
+      </label>
+
+      <div class="form-row">
+        <label>
+          <span>START DATE</span>
+          <input id="startDateInput" type="date" required />
+        </label>
+        <label>
+          <span>END DATE</span>
+          <input id="endDateInput" type="date" required />
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label>
+          <span>CATEGORY</span>
+          <select id="categoryInput"></select>
+        </label>
+        <label>
+          <span>STATUS</span>
+          <select id="statusInput">
+            <option>NOT STARTED</option>
+            <option>IN PROGRESS</option>
+            <option>REVIEW</option>
+            <option>DONE</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label>
+          <span>START TIME</span>
+          <input id="startInput" type="time" />
+        </label>
+        <label>
+          <span>END TIME</span>
+          <input id="endInput" type="time" />
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label style="grid-column: 1 / -1;">
+          <span>PRIORITY</span>
+          <select id="priorityInput">
+            <option>NORMAL</option>
+            <option>HIGH</option>
+            <option>CRITICAL</option>
+          </select>
+        </label>
+      </div>
+
+      <fieldset>
+        <legend>POSITION</legend>
+        <div id="positionChoices" class="member-choice-grid position-choice-grid"></div>
+      </fieldset>
+
+      <label>
+        <span>MEMO</span>
+        <textarea id="memoInput" rows="6" placeholder="작업 내용, 피드백 포인트, 준비물 등을 적어주세요."></textarea>
+      </label>
+
+      <div class="form-actions">
+        <button type="button" id="deleteBtn" class="danger-btn hidden">DELETE</button>
+        <div class="form-actions-right">
+          <button type="button" id="cancelBtn" class="ghost-btn">CANCEL</button>
+          <button type="submit" class="primary-btn">SAVE</button>
+        </div>
+      </div>
+    </form>
+  </aside>
+
+  <template id="eventCardTemplate">
+    <div class="event-card" role="button" tabindex="0">
+      <div class="event-topline">
+        <span class="event-category"></span>
+        <span class="event-time"></span>
+        <button type="button" class="card-delete-btn" title="일정 삭제" aria-label="일정 삭제">×</button>
+      </div>
+      <div class="event-title"></div>
+      <div class="event-bottom">
+        <span class="event-members event-positions"></span>
+        <i class="status-dot"></i>
+      </div>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

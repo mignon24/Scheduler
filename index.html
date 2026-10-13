@@ -109,6 +109,16 @@
               <div class="paper-weekday-row">
                 <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
               </div>
+
+              <div id="activeDateFilterBar" class="active-date-filter-bar hidden">
+                <div class="filter-bar-left">
+                  <span class="filter-pulse-dot"></span>
+                  <span id="activeDateFilterLabel" class="active-filter-label">2026.10.14 일정만 표시 중</span>
+                </div>
+                <button type="button" id="clearDateFilterBtn" class="clear-date-filter-btn" title="모든 날짜 일정 보기">
+                  ✕ 전체 일정 보기
+                </button>
+              </div>
             </header>
 
             <div id="calendarGrid" class="paper-calendar-grid"></div>
@@ -131,6 +141,32 @@
         </section>
       </section>
     </main>
+  </div>
+
+  <!-- 일일 일정 모달 (특정 날짜의 일정만 집중 확인 및 관리) -->
+  <div id="dayModalBackdrop" class="day-modal-backdrop"></div>
+  <div id="dayScheduleModal" class="day-schedule-modal" aria-hidden="true" role="dialog" aria-labelledby="dayModalTitle">
+    <div class="day-modal-header">
+      <div>
+        <div id="dayModalBadge" class="day-modal-badge">DATE SCHEDULE</div>
+        <h2 id="dayModalTitle" class="day-modal-title">10월 14일 (수)</h2>
+        <div id="dayModalCount" class="day-modal-count">2개의 일정이 있습니다</div>
+      </div>
+      <div class="day-modal-top-actions">
+        <button type="button" id="dayModalAddBtn" class="primary-btn mini-btn" title="이 날에 새 일정 추가">+ 새 일정</button>
+        <button type="button" id="closeDayModalBtn" class="icon-btn mini-icon" aria-label="닫기">×</button>
+      </div>
+    </div>
+    <div id="dayModalList" class="day-modal-list">
+      <!-- 동적 카드 목록 -->
+    </div>
+    <div class="day-modal-footer">
+      <div class="day-modal-footer-note">💡 카드를 누르면 상세 편집이 가능합니다.</div>
+      <div class="day-modal-footer-actions">
+        <button type="button" id="dayModalFilterToggleBtn" class="ghost-btn mini-btn">달력에서 이 날짜만 보기</button>
+        <button type="button" id="dayModalCloseBtn" class="ghost-btn mini-btn">닫기</button>
+      </div>
+    </div>
   </div>
 
   <div id="drawerBackdrop" class="drawer-backdrop"></div>

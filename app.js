@@ -668,6 +668,7 @@
 
   const state = {
     currentDate: new Date(2026, 9, 1),
+    selectedDate: null, // "YYYY-MM-DD" 선택 시 해당 날짜의 일정만 필터링
     view: "calendar",
     events: loadEvents(),
     categoryFilters: new Set(Object.keys(categories)),
@@ -713,7 +714,20 @@
     positionChoices: $("positionChoices") || $("memberChoices"),
     drawerEyebrow: $("drawerEyebrow"),
     drawerTitle: $("drawerTitle"),
-    template: $("eventCardTemplate")
+    template: $("eventCardTemplate"),
+    activeDateFilterBar: $("activeDateFilterBar"),
+    activeDateFilterLabel: $("activeDateFilterLabel"),
+    clearDateFilterBtn: $("clearDateFilterBtn"),
+    dayModalBackdrop: $("dayModalBackdrop"),
+    dayScheduleModal: $("dayScheduleModal"),
+    dayModalBadge: $("dayModalBadge"),
+    dayModalTitle: $("dayModalTitle"),
+    dayModalCount: $("dayModalCount"),
+    dayModalList: $("dayModalList"),
+    dayModalAddBtn: $("dayModalAddBtn"),
+    closeDayModalBtn: $("closeDayModalBtn"),
+    dayModalCloseBtn: $("dayModalCloseBtn"),
+    dayModalFilterToggleBtn: $("dayModalFilterToggleBtn")
   };
 
   function loadEvents() {
@@ -822,6 +836,16 @@
     return new Date(y, m - 1, d);
   }
 
+  const WEEKDAY_NAMES_KO = ["일", "월", "화", "수", "목", "금", "토"];
+
+  function formatDateKorean(iso) {
+    if (!iso) return "";
+    const [y, m, d] = iso.split("-").map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    const dayOfWeek = WEEKDAY_NAMES_KO[dateObj.getDay()];
+    return `${y}년 ${m}월 ${d}일 (${dayOfWeek})`;
+  }
+
   function formatShortDate(iso) {
     if (!iso) return "";
     const [, m, d] = iso.split("-");
@@ -849,10 +873,166 @@
 
   function eventMatchesFilters(event) {
     if (!state.categoryFilters.has(event.category)) return false;
+    // 날짜(숫자)를 눌러 특정 날짜가 선택된 경우 해당 날짜의 일정만 필터링
+    if (state.selectedDate) {
+      if (event.startDate > state.selectedDate || event.endDate < state.selectedDate) {
+        return false;
+      }
+    }
     if (state.positionFilters.has("전체")) return true;
     const eventPositions = event.positions || event.members || ["전체"];
     if (eventPositions.includes("전체")) return true;
     return eventPositions.some(p => state.positionFilters.has(p));
+  }
+
+  function getEventsForDate(iso) {
+    return state.events
+      .filter(event => {
+        const inRange = event.startDate <= iso && event.endDate >= iso;
+        if (!inRange) return false;
+        if (!state.categoryFilters.has(event.category)) return false;
+        if (state.positionFilters.has("전체")) return true;
+        const pos = event.positions || event.members || ["전체"];
+        if (pos.includes("전체")) return true;
+        return pos.some(p => state.positionFilters.has(p));
+      })
+      .sort((a, b) => {
+        const aMulti = a.startDate !== a.endDate;
+        const bMulti = b.startDate !== b.endDate;
+        if (aMulti !== bMulti) return aMulti ? -1 : 1;
+        return (a.startTime || "00:00").localeCompare(b.startTime || "00:00");
+      });
+  }
+
+  function selectDate(iso, openModal = true) {
+    state.selectedDate = iso;
+    render();
+    if (openModal) {
+      openDayScheduleModal(iso);
+    }
+  }
+
+  function clearDateFilter() {
+    state.selectedDate = null;
+    render();
+  }
+
+  function openDayScheduleModal(iso) {
+    if (!els.dayScheduleModal || !els.dayModalBackdrop) return;
+    const targetDate = iso || state.selectedDate || toDateString(new Date());
+    const dayEvents = getEventsForDate(targetDate);
+    const [y, m, d] = targetDate.split("-").map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    const dayName = WEEKDAY_NAMES_KO[dateObj.getDay()];
+
+    if (els.dayModalBadge) {
+      els.dayModalBadge.textContent = `${y}.${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")} · ${dayName}요일`;
+    }
+    if (els.dayModalTitle) {
+      els.dayModalTitle.textContent = `${m}월 ${d}일 (${dayName})`;
+    }
+    if (els.dayModalCount) {
+      els.dayModalCount.textContent = dayEvents.length === 0
+        ? "이 날에는 등록된 일정이 없습니다."
+        : `총 ${dayEvents.length}개의 일정이 진행됩니다.`;
+    }
+
+    if (els.dayModalFilterToggleBtn) {
+      if (state.selectedDate === targetDate) {
+        els.dayModalFilterToggleBtn.textContent = "✕ 달력 전체 일정 보기";
+      } else {
+        els.dayModalFilterToggleBtn.textContent = "📅 달력에서 이 날짜만 보기";
+      }
+    }
+
+    renderDayModalList(dayEvents, targetDate);
+
+    els.dayScheduleModal.classList.add("open");
+    els.dayModalBackdrop.classList.add("open");
+    els.dayScheduleModal.setAttribute("aria-hidden", "false");
+  }
+
+  function closeDayScheduleModal() {
+    if (!els.dayScheduleModal || !els.dayModalBackdrop) return;
+    els.dayScheduleModal.classList.remove("open");
+    els.dayModalBackdrop.classList.remove("open");
+    els.dayScheduleModal.setAttribute("aria-hidden", "true");
+  }
+
+  function renderDayModalList(dayEvents, targetDate) {
+    if (!els.dayModalList) return;
+    els.dayModalList.innerHTML = "";
+
+    if (!dayEvents.length) {
+      const empty = document.createElement("div");
+      empty.className = "day-modal-empty";
+      empty.innerHTML = `
+        <div class="empty-icon">📅</div>
+        <p>이 날에는 등록된 일정이 없습니다.</p>
+        <button type="button" class="primary-btn mini-btn" id="emptyAddBtn">+ 이 날에 새 일정 등록</button>
+      `;
+      empty.querySelector("#emptyAddBtn").addEventListener("click", () => {
+        closeDayScheduleModal();
+        openNewDrawer(targetDate);
+      });
+      els.dayModalList.appendChild(empty);
+      return;
+    }
+
+    dayEvents.forEach(event => {
+      const card = document.createElement("div");
+      card.className = "day-event-card";
+      const catColor = categories[event.category] || "#afc1de8c";
+      card.style.setProperty("--cat-color", catColor);
+
+      const isMulti = event.startDate !== event.endDate;
+      let timeText = "종일 일정";
+      if (isMulti) {
+        timeText = `${formatShortDate(event.startDate)} ~ ${formatShortDate(event.endDate)}`;
+      } else if (event.startTime) {
+        timeText = event.endTime ? `${event.startTime} - ${event.endTime}` : `${event.startTime} 시작`;
+      }
+
+      const posList = event.positions || event.members || ["전체"];
+      const posBadges = posList.map(p => {
+        const c = positionColors[p] || "#ffffff";
+        return `<span class="day-pos-pill" style="--pos-color:${c}; border-color:${c}40; background:${c}15;">${escapeHtml(p)}</span>`;
+      }).join("");
+
+      card.innerHTML = `
+        <div class="day-event-side-bar"></div>
+        <div class="day-event-content">
+          <div class="day-event-meta-top">
+            <span class="day-cat-pill" style="border-color:${catColor}; color:#ffffff; background:${catColor};">${escapeHtml(event.category)}</span>
+            <span class="day-time-tag">${escapeHtml(timeText)}</span>
+            <span class="day-status-pill ${statusClass(event.status)}">${escapeHtml(event.status)}</span>
+            <button type="button" class="day-card-delete-btn" title="일정 삭제" aria-label="일정 삭제">×</button>
+          </div>
+          <h4 class="day-event-title">${escapeHtml(event.title)}</h4>
+          ${event.memo ? `<p class="day-event-memo">${escapeHtml(event.memo)}</p>` : ""}
+          <div class="day-event-positions">${posBadges}</div>
+        </div>
+      `;
+
+      // 개별 삭제 버튼
+      const delBtn = card.querySelector(".day-card-delete-btn");
+      if (delBtn) {
+        delBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          deleteEventById(event.id);
+          // 모달 목록 갱신
+          openDayScheduleModal(targetDate);
+        });
+      }
+
+      // 카드 클릭 시 상세 수정 드로어 오픈
+      card.addEventListener("click", () => {
+        closeDayScheduleModal();
+        openEditDrawer(event.id);
+      });
+
+      els.dayModalList.appendChild(card);
+    });
   }
 
   function getVisibleEvents() {
@@ -1029,10 +1209,24 @@
         if (iso === todayIso) cell.classList.add("today");
         cell.dataset.date = iso;
 
-        const dayNumber = document.createElement("div");
-        dayNumber.className = "day-number";
+        const dayNumber = document.createElement("button");
+        dayNumber.type = "button";
+        dayNumber.className = "day-number interactive-day-num";
         dayNumber.textContent = day.getDate();
+        dayNumber.title = `${day.getMonth() + 1}월 ${day.getDate()}일 일정만 보기`;
+        dayNumber.setAttribute("aria-label", `${day.getMonth() + 1}월 ${day.getDate()}일 일정만 보기`);
+
+        // 날짜(숫자) 클릭 시 해당 날짜의 일정만 볼 수 있게 모달 열기 및 달력 필터 적용!
+        dayNumber.addEventListener("click", (e) => {
+          e.stopPropagation();
+          selectDate(iso, true);
+        });
+
         cell.appendChild(dayNumber);
+
+        if (state.selectedDate === iso) {
+          cell.classList.add("selected-day");
+        }
 
         // 날짜 칸 더블클릭 -> 새 일정 등록
         cell.addEventListener("dblclick", () => openNewDrawer(iso));
@@ -1098,6 +1292,18 @@
       weekRow.appendChild(eventsLayer);
       els.calendarGrid.appendChild(weekRow);
     });
+
+    if (els.activeDateFilterBar) {
+      if (state.selectedDate) {
+        els.activeDateFilterBar.classList.remove("hidden");
+        if (els.activeDateFilterLabel) {
+          const matchCount = visible.length;
+          els.activeDateFilterLabel.textContent = `${formatDateKorean(state.selectedDate)} 일정만 표시 중 (${matchCount}개)`;
+        }
+      } else {
+        els.activeDateFilterBar.classList.add("hidden");
+      }
+    }
   }
 
   let isDraggingCard = false;
@@ -1423,6 +1629,9 @@
       closeDrawer();
     }
     render();
+    if (els.dayScheduleModal && els.dayScheduleModal.classList.contains("open") && state.selectedDate) {
+      openDayScheduleModal(state.selectedDate);
+    }
   }
 
   function deleteCurrentEvent() {
@@ -1441,6 +1650,7 @@
   function bindEvents() {
     if (els.prevMonthBtn) {
       els.prevMonthBtn.addEventListener("click", () => {
+        state.selectedDate = null;
         state.currentDate = new Date(state.currentDate.getFullYear(), state.currentDate.getMonth() - 1, 1);
         renderMonth();
       });
@@ -1448,6 +1658,7 @@
 
     if (els.nextMonthBtn) {
       els.nextMonthBtn.addEventListener("click", () => {
+        state.selectedDate = null;
         state.currentDate = new Date(state.currentDate.getFullYear(), state.currentDate.getMonth() + 1, 1);
         renderMonth();
       });
@@ -1456,8 +1667,42 @@
     if (els.todayBtn) {
       els.todayBtn.addEventListener("click", () => {
         const now = new Date();
+        state.selectedDate = null;
         state.currentDate = new Date(now.getFullYear(), now.getMonth(), 1);
         renderMonth();
+      });
+    }
+
+    // 날짜 필터 해제 버튼 (전체 일정 보기)
+    if (els.clearDateFilterBtn) {
+      els.clearDateFilterBtn.addEventListener("click", clearDateFilter);
+    }
+
+    // 일일 일정 모달 버튼들
+    if (els.closeDayModalBtn) {
+      els.closeDayModalBtn.addEventListener("click", closeDayScheduleModal);
+    }
+    if (els.dayModalCloseBtn) {
+      els.dayModalCloseBtn.addEventListener("click", closeDayScheduleModal);
+    }
+    if (els.dayModalBackdrop) {
+      els.dayModalBackdrop.addEventListener("click", closeDayScheduleModal);
+    }
+    if (els.dayModalAddBtn) {
+      els.dayModalAddBtn.addEventListener("click", () => {
+        const target = state.selectedDate || toDateString(new Date());
+        closeDayScheduleModal();
+        openNewDrawer(target);
+      });
+    }
+    if (els.dayModalFilterToggleBtn) {
+      els.dayModalFilterToggleBtn.addEventListener("click", () => {
+        if (state.selectedDate) {
+          clearDateFilter();
+          closeDayScheduleModal();
+        } else {
+          closeDayScheduleModal();
+        }
       });
     }
 
@@ -1516,7 +1761,10 @@
     });
 
     window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeDrawer();
+      if (e.key === "Escape") {
+        closeDrawer();
+        closeDayScheduleModal();
+      }
 
       // 상세 모달이 열려 있을 때 텍스트 입력창이 아니면 Delete / Backspace 키로 삭제
       if ((e.key === "Delete" || e.key === "Backspace") && els.scheduleDrawer.classList.contains("open")) {

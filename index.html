@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ko">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,6 +8,7 @@
   <meta name="theme-color" content="#090406" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div class="app-shell">
     <header class="topbar">
@@ -107,7 +109,13 @@
               </div>
 
               <div class="paper-weekday-row">
-                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
               </div>
 
               <div id="activeDateFilterBar" class="active-date-filter-bar hidden">
@@ -145,7 +153,8 @@
 
   <!-- 일일 일정 모달 (특정 날짜의 일정만 집중 확인 및 관리) -->
   <div id="dayModalBackdrop" class="day-modal-backdrop"></div>
-  <div id="dayScheduleModal" class="day-schedule-modal" aria-hidden="true" role="dialog" aria-labelledby="dayModalTitle">
+  <div id="dayScheduleModal" class="day-schedule-modal" aria-hidden="true" role="dialog"
+    aria-labelledby="dayModalTitle">
     <div class="day-modal-header">
       <div>
         <div id="dayModalBadge" class="day-modal-badge">DATE SCHEDULE</div>
@@ -274,4 +283,5 @@
 
   <script src="app.js"></script>
 </body>
+
 </html>

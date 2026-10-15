@@ -1176,6 +1176,330 @@ fieldset legend { margin-bottom: 8px; }
   gap: 8px;
 }
 
+/* ==========================================================================
+   AUTHENTICATION & ROLE-BASED ACCESS CONTROL
+   ========================================================================== */
+
+/* Topbar Auth Status Pill */
+.auth-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  transition: all 0.25s ease;
+  user-select: none;
+}
+.auth-status-pill.admin {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+.auth-status-pill.viewer {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #d4d4d8;
+}
+.role-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.role-dot.admin {
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+}
+.role-dot.viewer {
+  background: #a1a1aa;
+}
+
+/* Mini Buttons for Topbar Auth Controls */
+.mini-btn {
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+/* Auth Modal Fullscreen Overlay */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(4, 4, 8, 0.88);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.28s ease, visibility 0.28s ease;
+}
+.auth-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Auth Card */
+.auth-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(135deg, rgba(24, 24, 34, 0.94) 0%, rgba(12, 12, 18, 0.96) 60%, rgba(6, 6, 10, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 28px;
+  padding: 38px 34px 32px;
+  box-shadow:
+    0 40px 100px -15px rgba(0, 0, 0, 0.98),
+    0 15px 40px rgba(0, 0, 0, 0.85),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.35),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.8),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  overflow: hidden;
+  transition: transform 0.25s ease;
+}
+.auth-card-glow {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(24px);
+}
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.auth-brand-text .brand-title {
+  font-weight: 800;
+  letter-spacing: .1em;
+  font-size: 13px;
+  color: #ffffff;
+}
+.auth-brand-text .brand-subtitle {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: .16em;
+  font-weight: 700;
+}
+.auth-header {
+  margin-top: -4px;
+}
+.auth-title {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+.auth-desc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Auth Input Form */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.auth-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.auth-input-icon {
+  position: absolute;
+  left: 16px;
+  font-size: 15px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.auth-password-input {
+  width: 100%;
+  background: rgba(8, 8, 12, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  padding: 14px 44px 14px 44px;
+  color: #ffffff;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+.auth-password-input:focus {
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+.auth-password-input.input-error {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+.auth-pwd-toggle-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+.auth-pwd-toggle-btn:hover {
+  color: #ffffff;
+}
+
+/* Auth Error Message */
+.auth-error-msg {
+  color: #ff6b81;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  border-radius: 12px;
+}
+.auth-error-msg.hidden {
+  display: none;
+}
+
+/* Auth Buttons */
+.auth-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.auth-submit-btn {
+  flex: 1;
+  padding: 13px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 14px;
+  cursor: pointer;
+  justify-content: center;
+}
+.auth-cancel-modal-btn {
+  padding: 13px 18px;
+  font-size: 13px;
+  border-radius: 14px;
+}
+
+/* Auth Guide Note */
+.auth-guide {
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  color: var(--muted);
+}
+.guide-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.guide-hint code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 7px;
+  border-radius: 6px;
+  color: #ffffff;
+  font-family: monospace;
+  font-size: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Shake Animation on Wrong Password */
+.auth-card.shake {
+  animation: authCardShake 0.4s ease;
+}
+@keyframes authCardShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+/* ==========================================================================
+   VIEWER ROLE RESTRICTIONS (구경/읽기 전용 모드 스타일)
+   ========================================================================== */
+body.role-viewer #addScheduleBtn {
+  display: none !important;
+}
+body.role-viewer #dayModalAddBtn {
+  display: none !important;
+}
+body.role-viewer .card-delete-btn {
+  display: none !important;
+}
+body.role-viewer .day-card-delete-btn {
+  display: none !important;
+}
+body.role-viewer #deleteBtn {
+  display: none !important;
+}
+body.role-viewer #saveScheduleBtn {
+  display: none !important;
+}
+body.role-viewer .day-modal-empty #emptyAddBtn {
+  display: none !important;
+}
+body.role-viewer .paper-memo-line {
+  cursor: default !important;
+  user-select: text;
+}
+body.role-viewer .paper-memo-line:focus {
+  outline: none !important;
+}
+body.role-viewer .event-bar {
+  cursor: pointer !important;
+}
+body.role-viewer .event-bar:active {
+  cursor: pointer !important;
+}
+
+/* Form Read-Only presentation in drawer for Viewer */
+body.role-viewer .schedule-form input:disabled,
+body.role-viewer .schedule-form textarea[readonly],
+body.role-viewer .schedule-form select:disabled {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #d4d4d8;
+  cursor: default;
+  opacity: 0.9;
+}
+body.role-viewer .member-choice-btn.disabled,
+body.role-viewer .position-choice-grid input:disabled + span {
+  opacity: 0.7;
+  cursor: default;
+}
+
 /* RESPONSIVE */
 @media (max-width: 980px) {
   :root { --sidebar: 190px; }

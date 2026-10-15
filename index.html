@@ -26,6 +26,12 @@
       </nav>
 
       <div class="top-actions">
+        <div id="authStatusPill" class="auth-status-pill viewer" title="현재 권한">
+          <span id="authRoleDot" class="role-dot viewer"></span>
+          <span id="authRoleLabel">VIEW ONLY</span>
+        </div>
+        <button type="button" id="authSwitchBtn" class="ghost-btn mini-btn" title="관리자 비밀번호 입력">관리자 전환</button>
+        <button type="button" id="authLogoutBtn" class="ghost-btn mini-btn" title="비밀번호 잠금">잠금</button>
         <button id="todayBtn" class="ghost-btn">TODAY</button>
         <button id="addScheduleBtn" class="primary-btn">+ ADD SCHEDULE</button>
       </div>
@@ -260,7 +266,7 @@
         <button type="button" id="deleteBtn" class="danger-btn hidden">DELETE</button>
         <div class="form-actions-right">
           <button type="button" id="cancelBtn" class="ghost-btn">CANCEL</button>
-          <button type="submit" class="primary-btn">SAVE</button>
+          <button type="submit" id="saveScheduleBtn" class="primary-btn">SAVE</button>
         </div>
       </div>
     </form>
@@ -280,6 +286,51 @@
       </div>
     </div>
   </template>
+
+  <!-- 접근 비밀번호 인증 오버레이 모달 -->
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-card" id="authCard">
+      <div class="auth-card-glow"></div>
+      <div class="auth-brand">
+        <div class="brand-mark">O</div>
+        <div class="auth-brand-text">
+          <div class="brand-title">OBSERVATION</div>
+          <div class="brand-subtitle">PROJECT SCHEDULER</div>
+        </div>
+      </div>
+
+      <div class="auth-header">
+        <h2 id="authTitle" class="auth-title">스케줄러 접근 인증</h2>
+        <p id="authDesc" class="auth-desc">일정을 확인하거나 관리하려면 비밀번호를 입력해주세요.</p>
+      </div>
+
+      <form id="authForm" class="auth-form" autocomplete="off">
+        <div class="auth-input-wrapper">
+          <span class="auth-input-icon">🔒</span>
+          <input type="password" id="authPasswordInput" class="auth-password-input" placeholder="비밀번호 입력" required autofocus />
+          <button type="button" id="authTogglePwdBtn" class="auth-pwd-toggle-btn" title="비밀번호 표시/숨기기" aria-label="비밀번호 표시">👁</button>
+        </div>
+
+        <div id="authErrorMsg" class="auth-error-msg hidden">
+          <span>⚠️</span>
+          <span id="authErrorText">비밀번호가 올바르지 않습니다. 다시 입력해주세요.</span>
+        </div>
+
+        <div class="auth-actions">
+          <button type="button" id="authCancelSwitchBtn" class="ghost-btn auth-cancel-modal-btn hidden">취소</button>
+          <button type="submit" id="authSubmitBtn" class="primary-btn auth-submit-btn">
+            <span>접속하기 ↗</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="auth-guide">
+        <div class="guide-hint">
+          <span>💡 관람용 비밀번호: <code>0000</code> (읽기 전용 접속)</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

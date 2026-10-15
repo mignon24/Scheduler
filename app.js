@@ -666,10 +666,15 @@
   }
 ];
 
+  const ADMIN_PASSWORD = "qweryuiop";
+  const VIEWER_PASSWORD = "0000";
+  const AUTH_STORAGE_KEY = "observation_scheduler_auth_role";
+
   const state = {
     currentDate: new Date(2026, 9, 1),
     selectedDate: null, // "YYYY-MM-DD" 선택 시 해당 날짜의 일정만 필터링
     view: "calendar",
+    role: null, // "admin" | "viewer"
     events: loadEvents(),
     categoryFilters: new Set(Object.keys(categories)),
     positionFilters: new Set(["전체"])
@@ -688,6 +693,7 @@
     importBtn: $("importBtn"),
     importFileInput: $("importFileInput"),
     addScheduleBtn: $("addScheduleBtn"),
+    saveScheduleBtn: $("saveScheduleBtn"),
     calendarView: $("calendarView"),
     timelineView: $("timelineView"),
     timelineList: $("timelineList"),
@@ -727,7 +733,23 @@
     dayModalAddBtn: $("dayModalAddBtn"),
     closeDayModalBtn: $("closeDayModalBtn"),
     dayModalCloseBtn: $("dayModalCloseBtn"),
-    dayModalFilterToggleBtn: $("dayModalFilterToggleBtn")
+    dayModalFilterToggleBtn: $("dayModalFilterToggleBtn"),
+    authOverlay: $("authOverlay"),
+    authCard: $("authCard"),
+    authForm: $("authForm"),
+    authPasswordInput: $("authPasswordInput"),
+    authTogglePwdBtn: $("authTogglePwdBtn"),
+    authErrorMsg: $("authErrorMsg"),
+    authErrorText: $("authErrorText"),
+    authSubmitBtn: $("authSubmitBtn"),
+    authCancelSwitchBtn: $("authCancelSwitchBtn"),
+    authTitle: $("authTitle"),
+    authDesc: $("authDesc"),
+    authStatusPill: $("authStatusPill"),
+    authRoleDot: $("authRoleDot"),
+    authRoleLabel: $("authRoleLabel"),
+    authSwitchBtn: $("authSwitchBtn"),
+    authLogoutBtn: $("authLogoutBtn")
   };
 
   function loadEvents() {
@@ -757,6 +779,7 @@
   }
 
   function saveEvents() {
+    if (state.role !== "admin") return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state.events));
   }
 
@@ -963,18 +986,39 @@
     if (!els.dayModalList) return;
     els.dayModalList.innerHTML = "";
 
+    const isAdmin = state.role === "admin";
+    if (els.dayModalAddBtn) {
+      if (isAdmin) {
+        els.dayModalAddBtn.classList.remove("hidden");
+      } else {
+        els.dayModalAddBtn.classList.add("hidden");
+      }
+    }
+
+    const noteEl = els.dayScheduleModal ? els.dayScheduleModal.querySelector(".day-modal-footer-note") : null;
+    if (noteEl) {
+      noteEl.textContent = isAdmin
+        ? "💡 카드를 누르면 상세 편집이 가능합니다."
+        : "💡 카드를 누르면 일정 상세 정보를 확인할 수 있습니다.";
+    }
+
     if (!dayEvents.length) {
       const empty = document.createElement("div");
       empty.className = "day-modal-empty";
       empty.innerHTML = `
         <div class="empty-icon">📅</div>
         <p>이 날에는 등록된 일정이 없습니다.</p>
-        <button type="button" class="primary-btn mini-btn" id="emptyAddBtn">+ 이 날에 새 일정 등록</button>
+        ${isAdmin ? `<button type="button" class="primary-btn mini-btn" id="emptyAddBtn">+ 이 날에 새 일정 등록</button>` : ""}
       `;
-      empty.querySelector("#emptyAddBtn").addEventListener("click", () => {
-        closeDayScheduleModal();
-        openNewDrawer(targetDate);
-      });
+      if (isAdmin) {
+        const btn = empty.querySelector("#emptyAddBtn");
+        if (btn) {
+          btn.addEventListener("click", () => {
+            closeDayScheduleModal();
+            openNewDrawer(targetDate);
+          });
+        }
+      }
       els.dayModalList.appendChild(empty);
       return;
     }
@@ -1006,7 +1050,7 @@
             <span class="day-cat-pill" style="border-color:${catColor}; color:#ffffff; background:${catColor};">${escapeHtml(event.category)}</span>
             <span class="day-time-tag">${escapeHtml(timeText)}</span>
             <span class="day-status-pill ${statusClass(event.status)}">${escapeHtml(event.status)}</span>
-            <button type="button" class="day-card-delete-btn" title="일정 삭제" aria-label="일정 삭제">×</button>
+            ${isAdmin ? `<button type="button" class="day-card-delete-btn" title="일정 삭제" aria-label="일정 삭제">×</button>` : ""}
           </div>
           <h4 class="day-event-title">${escapeHtml(event.title)}</h4>
           ${event.memo ? `<p class="day-event-memo">${escapeHtml(event.memo)}</p>` : ""}
@@ -1014,9 +1058,9 @@
         </div>
       `;
 
-      // 개별 삭제 버튼
+      // 개별 삭제 버튼 (관리자 전용)
       const delBtn = card.querySelector(".day-card-delete-btn");
-      if (delBtn) {
+      if (delBtn && isAdmin) {
         delBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           deleteEventById(event.id);
@@ -1025,7 +1069,7 @@
         });
       }
 
-      // 카드 클릭 시 상세 수정 드로어 오픈
+      // 카드 클릭 시 상세 드로어 오픈 (구경 모드는 읽기 전용으로 오픈)
       card.addEventListener("click", () => {
         closeDayScheduleModal();
         openEditDrawer(event.id);
@@ -1228,11 +1272,14 @@
           cell.classList.add("selected-day");
         }
 
-        // 날짜 칸 더블클릭 -> 새 일정 등록
-        cell.addEventListener("dblclick", () => openNewDrawer(iso));
+        // 날짜 칸 더블클릭 -> 새 일정 등록 (관리자만)
+        cell.addEventListener("dblclick", () => {
+          if (state.role === "admin") openNewDrawer(iso);
+        });
 
-        // Drag & drop date target
+        // Drag & drop date target (관리자만)
         cell.addEventListener("dragover", (e) => {
+          if (state.role !== "admin") return;
           e.preventDefault();
           if (e.dataTransfer) {
             e.dataTransfer.dropEffect = "move";
@@ -1242,11 +1289,13 @@
           }
         });
         cell.addEventListener("dragleave", (e) => {
+          if (state.role !== "admin") return;
           if (!cell.contains(e.relatedTarget)) {
             cell.classList.remove("drag-over");
           }
         });
         cell.addEventListener("drop", (e) => {
+          if (state.role !== "admin") return;
           e.preventDefault();
           cell.classList.remove("drag-over");
           const eventId = draggedEventId || (e.dataTransfer ? (e.dataTransfer.getData("text/plain") || e.dataTransfer.getData("text")) : null);
@@ -1315,7 +1364,8 @@
     bar.className = "event-bar";
     bar.setAttribute("role", "button");
     bar.setAttribute("tabindex", "0");
-    bar.setAttribute("draggable", "true");
+    const isAdmin = state.role === "admin";
+    bar.setAttribute("draggable", isAdmin ? "true" : "false");
     bar.dataset.eventId = event.id;
 
     const color = categories[event.category] || "#2563eb";
@@ -1332,12 +1382,12 @@
     bar.innerHTML = `
       <span class="event-bar-title">${escapeHtml(event.title)}</span>
       ${posText ? `<span class="event-bar-meta">· ${escapeHtml(posText)}</span>` : ""}
-      <button type="button" class="card-delete-btn" title="일정 삭제" aria-label="일정 삭제">×</button>
+      ${isAdmin ? `<button type="button" class="card-delete-btn" title="일정 삭제" aria-label="일정 삭제">×</button>` : ""}
     `;
 
-    // 삭제 버튼
+    // 삭제 버튼 (관리자 전용)
     const delBtn = bar.querySelector(".card-delete-btn");
-    if (delBtn) {
+    if (delBtn && isAdmin) {
       delBtn.addEventListener("mousedown", (e) => e.stopPropagation());
       delBtn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -1346,8 +1396,12 @@
       });
     }
 
-    // 드래그 핸들러
+    // 드래그 핸들러 (관리자 전용)
     bar.addEventListener("dragstart", (e) => {
+      if (state.role !== "admin") {
+        e.preventDefault();
+        return;
+      }
       isDraggingCard = true;
       draggedEventId = event.id;
       if (e.dataTransfer) {
@@ -1371,9 +1425,11 @@
 
     bar.addEventListener("keydown", (e) => {
       if (e.key === "Delete" || e.key === "Backspace") {
-        e.preventDefault();
-        e.stopPropagation();
-        deleteEventById(event.id);
+        if (state.role === "admin") {
+          e.preventDefault();
+          e.stopPropagation();
+          deleteEventById(event.id);
+        }
       } else if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         openEditDrawer(event.id);
@@ -1542,7 +1598,22 @@
   }
 
   function openNewDrawer(date = toDateString(new Date())) {
+    if (state.role !== "admin") return;
     resetForm();
+
+    els.titleInput.readOnly = false;
+    els.startDateInput.disabled = false;
+    els.endDateInput.disabled = false;
+    els.categoryInput.disabled = false;
+    els.startInput.disabled = false;
+    els.endInput.disabled = false;
+    els.statusInput.disabled = false;
+    els.priorityInput.disabled = false;
+    els.memoInput.readOnly = false;
+    els.positionChoices.querySelectorAll("input").forEach(input => input.disabled = false);
+    if (els.saveScheduleBtn) els.saveScheduleBtn.classList.remove("hidden");
+    els.cancelBtn.textContent = "CANCEL";
+
     els.drawerEyebrow.textContent = "NEW SCHEDULE";
     els.drawerTitle.textContent = "Add schedule";
     els.startDateInput.value = date;
@@ -1560,8 +1631,10 @@
     const event = state.events.find(e => e.id === id);
     if (!event) return;
     resetForm();
-    els.drawerEyebrow.textContent = "SCHEDULE DETAIL";
-    els.drawerTitle.textContent = "Edit schedule";
+
+    const isAdmin = state.role === "admin";
+    els.drawerEyebrow.textContent = isAdmin ? "SCHEDULE DETAIL" : "SCHEDULE DETAIL (VIEW ONLY)";
+    els.drawerTitle.textContent = isAdmin ? "Edit schedule" : (event.title || "View schedule");
     els.scheduleId.value = event.id;
     els.titleInput.value = event.title;
     els.startDateInput.value = event.startDate;
@@ -1576,8 +1649,29 @@
     const targetPositions = event.positions || event.members || ["전체"];
     els.positionChoices.querySelectorAll("input").forEach(input => {
       input.checked = targetPositions.includes(input.value);
+      input.disabled = !isAdmin;
     });
-    els.deleteBtn.classList.remove("hidden");
+
+    els.titleInput.readOnly = !isAdmin;
+    els.startDateInput.disabled = !isAdmin;
+    els.endDateInput.disabled = !isAdmin;
+    els.categoryInput.disabled = !isAdmin;
+    els.startInput.disabled = !isAdmin;
+    els.endInput.disabled = !isAdmin;
+    els.statusInput.disabled = !isAdmin;
+    els.priorityInput.disabled = !isAdmin;
+    els.memoInput.readOnly = !isAdmin;
+
+    if (isAdmin) {
+      els.deleteBtn.classList.remove("hidden");
+      if (els.saveScheduleBtn) els.saveScheduleBtn.classList.remove("hidden");
+      els.cancelBtn.textContent = "CANCEL";
+    } else {
+      els.deleteBtn.classList.add("hidden");
+      if (els.saveScheduleBtn) els.saveScheduleBtn.classList.add("hidden");
+      els.cancelBtn.textContent = "닫기 (CLOSE)";
+    }
+
     openDrawer();
   }
 
@@ -1607,6 +1701,7 @@
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (state.role !== "admin") return;
     const data = collectFormEvent();
     const index = state.events.findIndex(item => item.id === data.id);
     if (index >= 0) state.events[index] = data;
@@ -1620,6 +1715,7 @@
   }
 
   function deleteEventById(id) {
+    if (state.role !== "admin") return;
     if (!id) return;
     const exists = state.events.some(e => e.id === id);
     if (!exists) return;
@@ -1635,6 +1731,7 @@
   }
 
   function deleteCurrentEvent() {
+    if (state.role !== "admin") return;
     const id = els.scheduleId ? els.scheduleId.value : "";
     if (id) {
       deleteEventById(id);
@@ -1766,8 +1863,9 @@
         closeDayScheduleModal();
       }
 
-      // 상세 모달이 열려 있을 때 텍스트 입력창이 아니면 Delete / Backspace 키로 삭제
+      // 상세 모달이 열려 있을 때 텍스트 입력창이 아니면 Delete / Backspace 키로 삭제 (관리자만)
       if ((e.key === "Delete" || e.key === "Backspace") && els.scheduleDrawer.classList.contains("open")) {
+        if (state.role !== "admin") return;
         const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : "";
         if (tag !== "input" && tag !== "textarea") {
           e.preventDefault();
@@ -1792,7 +1890,9 @@
     document.querySelectorAll(".paper-memo-line").forEach(line => {
       const key = line.dataset.line;
       if (saved[key]) line.textContent = saved[key];
+      line.setAttribute("contenteditable", state.role === "admin" ? "true" : "false");
       line.addEventListener("input", () => {
+        if (state.role !== "admin") return;
         let current = {};
         try {
           current = JSON.parse(localStorage.getItem(MEMO_STORAGE_KEY) || "{}");
@@ -1803,8 +1903,152 @@
     });
   }
 
+  // ==========================================================================
+  // AUTHENTICATION & ROLE MANAGEMENT
+  // ==========================================================================
+  function applyRole(role) {
+    state.role = role;
+    document.body.classList.remove("role-admin", "role-viewer");
+
+    if (role === "admin") {
+      document.body.classList.add("role-admin");
+      if (els.authStatusPill) els.authStatusPill.className = "auth-status-pill admin";
+      if (els.authRoleDot) els.authRoleDot.className = "role-dot admin";
+      if (els.authRoleLabel) els.authRoleLabel.textContent = "ADMIN (수정 모드)";
+      if (els.authSwitchBtn) els.authSwitchBtn.classList.add("hidden");
+      if (els.authLogoutBtn) els.authLogoutBtn.classList.remove("hidden");
+      if (els.addScheduleBtn) els.addScheduleBtn.classList.remove("hidden");
+    } else if (role === "viewer") {
+      document.body.classList.add("role-viewer");
+      if (els.authStatusPill) els.authStatusPill.className = "auth-status-pill viewer";
+      if (els.authRoleDot) els.authRoleDot.className = "role-dot viewer";
+      if (els.authRoleLabel) els.authRoleLabel.textContent = "VIEW ONLY (구경 모드)";
+      if (els.authSwitchBtn) els.authSwitchBtn.classList.remove("hidden");
+      if (els.authLogoutBtn) els.authLogoutBtn.classList.remove("hidden");
+      if (els.addScheduleBtn) els.addScheduleBtn.classList.add("hidden");
+    }
+
+    document.querySelectorAll(".paper-memo-line").forEach(l => {
+      l.setAttribute("contenteditable", role === "admin" ? "true" : "false");
+    });
+  }
+
+  function showAuthModal(isSwitching = false) {
+    if (!els.authOverlay) return;
+    if (els.authPasswordInput) {
+      els.authPasswordInput.value = "";
+      els.authPasswordInput.classList.remove("input-error");
+    }
+    if (els.authErrorMsg) els.authErrorMsg.classList.add("hidden");
+    if (els.authCard) els.authCard.classList.remove("shake");
+
+    if (isSwitching) {
+      if (els.authTitle) els.authTitle.textContent = "관리자 권한 전환";
+      if (els.authDesc) els.authDesc.textContent = "일정 수정 권한을 활성화하려면 관리자 비밀번호를 입력해주세요.";
+      if (els.authCancelSwitchBtn) els.authCancelSwitchBtn.classList.remove("hidden");
+    } else {
+      if (els.authTitle) els.authTitle.textContent = "스케줄러 접근 인증";
+      if (els.authDesc) els.authDesc.textContent = "일정을 확인하거나 관리하려면 비밀번호를 입력해주세요.";
+      if (els.authCancelSwitchBtn) els.authCancelSwitchBtn.classList.add("hidden");
+    }
+
+    els.authOverlay.classList.remove("hidden");
+    setTimeout(() => {
+      if (els.authPasswordInput) els.authPasswordInput.focus();
+    }, 120);
+  }
+
+  function hideAuthModal() {
+    if (!els.authOverlay) return;
+    els.authOverlay.classList.add("hidden");
+  }
+
+  function handleAuthSubmit(e) {
+    if (e) e.preventDefault();
+    if (!els.authPasswordInput) return;
+    const inputVal = els.authPasswordInput.value.trim();
+
+    if (inputVal === ADMIN_PASSWORD) {
+      try {
+        sessionStorage.setItem(AUTH_STORAGE_KEY, "admin");
+      } catch (err) { }
+      applyRole("admin");
+      hideAuthModal();
+      render();
+    } else if (inputVal === VIEWER_PASSWORD) {
+      try {
+        sessionStorage.setItem(AUTH_STORAGE_KEY, "viewer");
+      } catch (err) { }
+      applyRole("viewer");
+      hideAuthModal();
+      render();
+    } else {
+      if (els.authPasswordInput) els.authPasswordInput.classList.add("input-error");
+      if (els.authErrorMsg) els.authErrorMsg.classList.remove("hidden");
+      if (els.authCard) {
+        els.authCard.classList.remove("shake");
+        void els.authCard.offsetWidth; // re-flow to trigger animation
+        els.authCard.classList.add("shake");
+      }
+      els.authPasswordInput.focus();
+      els.authPasswordInput.select();
+    }
+  }
+
+  function initAuth() {
+    let savedRole = null;
+    try {
+      savedRole = sessionStorage.getItem(AUTH_STORAGE_KEY);
+    } catch (e) { }
+
+    if (savedRole === "admin" || savedRole === "viewer") {
+      applyRole(savedRole);
+      hideAuthModal();
+    } else {
+      applyRole("viewer");
+      showAuthModal(false);
+    }
+
+    if (els.authForm) {
+      els.authForm.addEventListener("submit", handleAuthSubmit);
+    }
+
+    if (els.authTogglePwdBtn && els.authPasswordInput) {
+      els.authTogglePwdBtn.addEventListener("click", () => {
+        const isPwd = els.authPasswordInput.type === "password";
+        els.authPasswordInput.type = isPwd ? "text" : "password";
+        els.authTogglePwdBtn.textContent = isPwd ? "🙈" : "👁";
+      });
+    }
+
+    if (els.authCancelSwitchBtn) {
+      els.authCancelSwitchBtn.addEventListener("click", () => {
+        hideAuthModal();
+      });
+    }
+
+    if (els.authSwitchBtn) {
+      els.authSwitchBtn.addEventListener("click", () => {
+        showAuthModal(true);
+      });
+    }
+
+    if (els.authLogoutBtn) {
+      els.authLogoutBtn.addEventListener("click", () => {
+        try {
+          sessionStorage.removeItem(AUTH_STORAGE_KEY);
+        } catch (e) { }
+        closeDrawer();
+        closeDayScheduleModal();
+        applyRole("viewer");
+        showAuthModal(false);
+      });
+    }
+  }
+
   populateFormChoices();
   bindEvents();
   initPaperMemos();
+  initAuth();
   render();
 })();

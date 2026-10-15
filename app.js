@@ -666,7 +666,7 @@
   }
 ];
 
-  const ADMIN_PASSWORD = "qksrkqtmqslek";
+  const ADMIN_PASSWORD = "qwertyuiop";
   const VIEWER_PASSWORD = "0000";
   const AUTH_STORAGE_KEY = "observation_scheduler_auth_role";
 

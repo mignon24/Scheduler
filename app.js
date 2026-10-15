@@ -667,6 +667,14 @@
   ];
 
   const ADMIN_PASSWORD = "qwertyuiop";
+  const ADMIN_PASSWORDS = [
+    "qwertyuiop",
+    "qweryuiop",
+    "qksrkqtmqslek",
+    "ㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔ",
+    "ㅂㅈㄷㄱㅛㅕㅑㅐㅔ",
+    "반갑습니다"
+  ];
   const VIEWER_PASSWORD = "0000";
   const AUTH_STORAGE_KEY = "observation_scheduler_auth_role";
 
@@ -1966,9 +1974,10 @@
   function handleAuthSubmit(e) {
     if (e) e.preventDefault();
     if (!els.authPasswordInput) return;
-    const inputVal = els.authPasswordInput.value.trim();
+    const inputVal = els.authPasswordInput.value.trim().toLowerCase();
+    const isAdmin = ADMIN_PASSWORDS.some(pwd => pwd.toLowerCase() === inputVal);
 
-    if (inputVal === ADMIN_PASSWORD) {
+    if (isAdmin) {
       try {
         sessionStorage.setItem(AUTH_STORAGE_KEY, "admin");
       } catch (err) { }

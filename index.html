@@ -26,6 +26,10 @@
       </nav>
 
       <div class="top-actions">
+        <div id="syncStatusBadge" class="sync-status-badge offline" title="클라우드 실시간 동기화 상태">
+          <span class="sync-pulse-dot"></span>
+          <span id="syncStatusText">LOCAL</span>
+        </div>
         <div id="authStatusPill" class="auth-status-pill viewer" title="현재 권한">
           <span id="authRoleDot" class="role-dot viewer"></span>
           <span id="authRoleLabel">VIEW ONLY</span>
@@ -333,6 +337,10 @@
     </div>
   </div>
 
+  <!-- Firebase 실시간 클라우드 DB 연동 스크립트 -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <script src="app.js"></script>
 </body>
 

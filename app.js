@@ -758,8 +758,22 @@
     authRoleDot: $("authRoleDot"),
     authRoleLabel: $("authRoleLabel"),
     authSwitchBtn: $("authSwitchBtn"),
-    authLogoutBtn: $("authLogoutBtn")
+    authLogoutBtn: $("authLogoutBtn"),
+    syncStatusBadge: $("syncStatusBadge"),
+    syncStatusText: $("syncStatusText")
   };
+
+  function normalizeEvent(event) {
+    const start = event.startDate || event.date || toDateString(new Date());
+    const end = event.endDate || event.startDate || event.date || start;
+    return {
+      ...event,
+      startDate: start,
+      endDate: end,
+      positions: event.positions || event.members || ["전체"],
+      category: categories[event.category] ? event.category : "MEETING"
+    };
+  }
 
   function loadEvents() {
     try {
@@ -767,17 +781,7 @@
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map(event => {
-            const start = event.startDate || event.date || toDateString(new Date());
-            const end = event.endDate || event.startDate || event.date || start;
-            return {
-              ...event,
-              startDate: start,
-              endDate: end,
-              positions: event.positions || event.members || ["전체"],
-              category: categories[event.category] ? event.category : "MEETING"
-            };
-          });
+          return parsed.map(normalizeEvent);
         }
       }
     } catch (err) {
@@ -791,6 +795,7 @@
     if (state.role !== "admin") return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state.events));
     localStorage.setItem("observation_events_updated_at", String(Date.now()));
+    syncToCloud();
   }
 
   async function exportData() {
@@ -848,17 +853,7 @@
       const data = await res.json();
       const remoteEvents = Array.isArray(data) ? data : data.events;
       if (Array.isArray(remoteEvents) && remoteEvents.length > 0) {
-        const normalized = remoteEvents.map(event => {
-          const start = event.startDate || event.date || toDateString(new Date());
-          const end = event.endDate || event.startDate || event.date || start;
-          return {
-            ...event,
-            startDate: start,
-            endDate: end,
-            positions: event.positions || event.members || ["전체"],
-            category: categories[event.category] ? event.category : "MEETING"
-          };
-        });
+        const normalized = remoteEvents.map(normalizeEvent);
 
         const remoteUpdated = data.updatedAt ? new Date(data.updatedAt).getTime() : 0;
         const localUpdated = Number(localStorage.getItem("observation_events_updated_at") || "0");
@@ -1979,6 +1974,8 @@
         } catch (e) { }
         current[key] = line.textContent.trim();
         localStorage.setItem(MEMO_STORAGE_KEY, JSON.stringify(current));
+        clearTimeout(memoSyncTimer);
+        memoSyncTimer = setTimeout(syncToCloud, 600);
       });
     });
   }
@@ -2129,10 +2126,85 @@
     }
   }
 
+  // ==========================================================================
+  // FIREBASE CLOUD REAL-TIME DATABASE SYNCHRONIZATION
+  // ==========================================================================
+  let db = null;
+  let isCloudSyncActive = false;
+  let memoSyncTimer = null;
+
+  function updateSyncBadge(isLive) {
+    if (!els.syncStatusBadge || !els.syncStatusText) return;
+    if (isLive) {
+      els.syncStatusBadge.className = "sync-status-badge live";
+      els.syncStatusText.textContent = "LIVE SYNC";
+      els.syncStatusBadge.title = "Firebase 실시간 클라우드 DB 연결됨 (모든 기기에 자동 동기화 중)";
+    } else {
+      els.syncStatusBadge.className = "sync-status-badge offline";
+      els.syncStatusText.textContent = "LOCAL";
+      els.syncStatusBadge.title = "로컬/JSON 모드로 작동 중 (firebase-config.js 설정 시 실시간 연동)";
+    }
+  }
+
+  function initFirebase() {
+    if (window.firebase && window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey) {
+      try {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(window.FIREBASE_CONFIG);
+        }
+        db = firebase.firestore();
+        isCloudSyncActive = true;
+        updateSyncBadge(true);
+        console.log("🔥 Firebase Firestore 실시간 클라우드 연동 성공!");
+
+        // 실시간 변경 감지 리스너 (모든 사람/기기 화면에 실시간 자동 반영!)
+        db.collection("scheduler").doc("main").onSnapshot((doc) => {
+          if (doc && doc.exists) {
+            const data = doc.data();
+            if (data && Array.isArray(data.events)) {
+              state.events = data.events.map(normalizeEvent);
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(state.events));
+              if (data.memos && typeof data.memos === "object") {
+                localStorage.setItem(MEMO_STORAGE_KEY, JSON.stringify(data.memos));
+                initPaperMemos();
+              }
+              render();
+            }
+          } else if (state.role === "admin") {
+            syncToCloud();
+          }
+        }, (err) => {
+          console.warn("Firestore snapshot error:", err);
+          updateSyncBadge(false);
+        });
+      } catch (err) {
+        console.warn("Firebase 초기화 중 오류 발생:", err);
+        updateSyncBadge(false);
+      }
+    } else {
+      updateSyncBadge(false);
+    }
+  }
+
+  function syncToCloud() {
+    if (!db || !isCloudSyncActive || state.role !== "admin") return;
+    let memos = {};
+    try {
+      memos = JSON.parse(localStorage.getItem(MEMO_STORAGE_KEY) || "{}");
+    } catch (e) { }
+
+    db.collection("scheduler").doc("main").set({
+      events: state.events,
+      memos: memos,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(err => console.error("Firestore sync error:", err));
+  }
+
   populateFormChoices();
   bindEvents();
   initPaperMemos();
   initAuth();
   render();
   loadRemoteEvents();
+  initFirebase();
 })();

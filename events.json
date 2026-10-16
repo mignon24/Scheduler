@@ -1,0 +1,648 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-10-16T02:44:42.684Z",
+  "events": [
+    {
+      "id": "459e002c-6638-43a0-a42e-539a6c2d9cb4",
+      "title": "Environment & Level Lock",
+      "startDate": "2026-11-06",
+      "endDate": "2026-11-06",
+      "startTime": "18:00",
+      "endTime": "",
+      "category": "DEADLINE",
+      "positions": [
+        "레벨디자인",
+        "언리얼 오퍼레이터"
+      ],
+      "members": [
+        "레벨디자인",
+        "언리얼 오퍼레이터"
+      ],
+      "status": "NOT STARTED",
+      "priority": "CRITICAL",
+      "memo": "환경 레벨, 라이팅, 기본 ICVFX 연결 확정."
+    },
+    {
+      "id": "b0ca578a-71a7-4fd5-b786-29ddaa22e265",
+      "title": "Camera 트래킹 & ICVFX 셋업 및 테스트",
+      "startDate": "2026-11-12",
+      "endDate": "2026-11-13",
+      "startTime": "13:00",
+      "endTime": "17:00",
+      "category": "TEST",
+      "positions": [
+        "촬영",
+        "언리얼 오퍼레이터",
+        "연출"
+      ],
+      "members": [
+        "촬영",
+        "언리얼 오퍼레이터",
+        "연출"
+      ],
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "memo": "렌즈 프로파일, 트래커 캘리브레이션, LED 배경 반사 및 포그 체크."
+    },
+    {
+      "id": "fa6170e8-3338-45f3-a42e-0762cf86af47",
+      "title": "버추얼 스튜디오 본 촬영 (Main Shoot)",
+      "startDate": "2026-11-19",
+      "endDate": "2026-11-20",
+      "startTime": "09:00",
+      "endTime": "18:00",
+      "category": "SHOOTING",
+      "positions": [
+        "전체"
+      ],
+      "members": [
+        "전체"
+      ],
+      "status": "NOT STARTED",
+      "priority": "CRITICAL",
+      "memo": "메인 촬영 (LED 월 실시간 연동 ICVFX 촬영)."
+    },
+    {
+      "id": "fe700d60-d6a6-4700-a4ea-5c6f6e5fbe61",
+      "title": "포스트 프로덕션 & 컴포지팅 주간",
+      "startDate": "2026-11-25",
+      "endDate": "2026-11-27",
+      "startTime": "13:00",
+      "endTime": "18:00",
+      "category": "POST",
+      "positions": [
+        "아트",
+        "언리얼 오퍼레이터"
+      ],
+      "members": [
+        "아트",
+        "언리얼 오퍼레이터"
+      ],
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "memo": "촬영본 컷편집, 언리얼 렌더 패스 합성 및 사운드 믹싱."
+    },
+    {
+      "id": "5fa642f0-780b-4382-821c-51e4e8f7b954",
+      "title": "최종 가편집본 시사회 & 피드백",
+      "startDate": "2026-12-04",
+      "endDate": "2026-12-04",
+      "startTime": "14:00",
+      "endTime": "17:00",
+      "category": "FEEDBACK",
+      "positions": [
+        "연출",
+        "전체"
+      ],
+      "members": [
+        "연출",
+        "전체"
+      ],
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "memo": "최종 상영 전 전체 시사 및 디테일 피드백 반영."
+    },
+    {
+      "id": "7f1d41d8-3a51-4e19-a866-28722093d5a7",
+      "title": "Final Presentation & 상영회",
+      "startDate": "2026-12-11",
+      "endDate": "2026-12-11",
+      "startTime": "13:00",
+      "endTime": "",
+      "category": "DEADLINE",
+      "positions": [
+        "전체"
+      ],
+      "members": [
+        "전체"
+      ],
+      "status": "NOT STARTED",
+      "priority": "CRITICAL",
+      "memo": "XR 콘텐츠 최종 제작발표회 및 상영."
+    },
+    {
+      "id": "3c8d1f39-d3b4-4f3d-b0e9-506fbaf350ad",
+      "title": "아이디어 취합 및 스토리 방향 정리",
+      "startDate": "2026-10-12",
+      "endDate": "2026-10-12",
+      "date": "2026-10-12",
+      "category": "PLANNING",
+      "startTime": "",
+      "endTime": "",
+      "status": "IN PROGRESS",
+      "priority": "HIGH",
+      "positions": [
+        "전체"
+      ],
+      "members": [
+        "전체"
+      ],
+      "memo": "핵심 장면, 이상현상, 연구원 행동, 가상공간 발견 사건, 엔딩, 사운드, 카메라·미장센·공간 레퍼런스 취합. 팀원 아이디어를 감독안에 반영할 항목과 보류할 항목으로 분류."
+    },
+    {
+      "id": "8e0476bb-efa3-49c4-9b62-75913a5deccb",
+      "title": "OBSERVATION Story V1 확정",
+      "startDate": "2026-10-12",
+      "endDate": "2026-10-12",
+      "date": "2026-10-12",
+      "category": "PLANNING",
+      "startTime": "",
+      "endTime": "",
+      "status": "IN PROGRESS",
+      "priority": "CRITICAL",
+      "positions": [
+        "연출"
+      ],
+      "members": [
+        "연출"
+      ],
+      "memo": "연구 목적 / 수국-AI-연구원 관계 / 연구일지 / 이상현상 단계 / 연구원의 의심 계기 / 공간 경계 발견 / Level 01→02 Reveal / 엔딩 확정. 이후 큰 스토리 변경 최소화."
+    },
+    {
+      "id": "a741551d-a077-4b56-b9e1-6c55cdb5a7af",
+      "title": "Level 01·02 Production Design V1",
+      "startDate": "2026-10-12",
+      "endDate": "2026-10-13",
+      "date": "2026-10-12",
+      "category": "PRODUCTION",
+      "startTime": "",
+      "endTime": "",
+      "status": "IN PROGRESS",
+      "priority": "HIGH",
+      "positions": [
+        "연출",
+        "레벨디자인",
+        "아트"
+      ],
+      "members": [
+        "연출",
+        "레벨디자인",
+        "아트"
+      ],
+      "memo": "Level 01 가짜 연구공간+자연환경 / Level 02 Observation Facility 비주얼 방향 설정. 실제 세트와 Unreal 영역 구분. 공간·아트 레퍼런스 및 필요한 에셋 후보 조사."
+    },
+    {
+      "id": "67dbd009-30fb-417a-a477-59da8221f49e",
+      "title": "전체 Sequence & Runtime 설계",
+      "startDate": "2026-10-13",
+      "endDate": "2026-10-13",
+      "date": "2026-10-13",
+      "category": "PLANNING",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "NORMAL",
+      "positions": [
+        "연출"
+      ],
+      "members": [
+        "연출"
+      ],
+      "memo": "전체 이야기를 OBSERVE → SYNCHRONIZE → ERROR → TEST → DISCOVER → BREAK → OBSERVED 구조로 분할. 시퀀스별 예상 러닝타임 설정. 최종 영상 3분 미만 기준."
+    },
+    {
+      "id": "c6dc2813-4e6e-4ece-a8fd-fc0efa59319e",
+      "title": "Shot List V1 제작",
+      "startDate": "2026-10-13",
+      "endDate": "2026-10-13",
+      "date": "2026-10-13",
+      "category": "PLANNING",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "CRITICAL",
+      "positions": [
+        "연출",
+        "촬영"
+      ],
+      "members": [
+        "연출",
+        "촬영"
+      ],
+      "memo": "전체 시퀀스를 Shot 단위로 분할. Shot Number / Duration / Shot Size / Angle / POV / 예상 Lens / Camera Movement / Actor Blocking / Tracking / IC VFX 여부 정리."
+    },
+    {
+      "id": "27af882f-2888-4eb6-8431-ac1911cb3292",
+      "title": "카메라 시점·화각·무빙 설계 V1",
+      "startDate": "2026-10-13",
+      "endDate": "2026-10-14",
+      "date": "2026-10-13",
+      "category": "SHOOTING",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "positions": [
+        "연출",
+        "촬영",
+        "언리얼 오퍼레이터"
+      ],
+      "members": [
+        "연출",
+        "촬영",
+        "언리얼 오퍼레이터"
+      ],
+      "memo": "POV / Surveillance / 일반 시점 구분. CU·MCU·MS·Tight FS·WS 구성. 예상 렌즈와 카메라 거리 검토. Dolly / Boom / Tracking 후보 및 Tracking 필요 Shot 표시."
+    },
+    {
+      "id": "c8259d4a-a3bf-41ba-918f-970ffa9c8d5b",
+      "title": "Art & Props Design V1",
+      "startDate": "2026-10-13",
+      "endDate": "2026-10-14",
+      "date": "2026-10-13",
+      "category": "PLANNING",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "positions": [
+        "연출",
+        "아트"
+      ],
+      "members": [
+        "연출",
+        "아트"
+      ],
+      "memo": "수국 / 화분 / 연구일지 / 실험도구 / 연구 테이블 / 연구원 의상 / 창·프레임 / 가상공간 경계 구조물의 디자인 방향과 레퍼런스 정리. 실제 제작·구매·대여 여부 구분."
+    },
+    {
+      "id": "2a20093d-7ce9-48ec-9951-253aa768ce0c",
+      "title": "전체 Storyboard V1 제작",
+      "startDate": "2026-10-14",
+      "endDate": "2026-10-14",
+      "date": "2026-10-14",
+      "category": "PLANNING",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "CRITICAL",
+      "positions": [
+        "연출",
+        "촬영"
+      ],
+      "members": [
+        "연출",
+        "촬영"
+      ],
+      "memo": "전체 시퀀스를 컷 단위로 시각화. 각 컷에 Shot Number / Duration / Shot Size / Angle / 예상 Lens / Camera Movement / Actor Blocking / Tracking 여부 / IC VFX 요소 / Unreal 환경 변화 / Sound Cue 작성."
+    },
+    {
+      "id": "54ac54e4-ccde-4816-97c5-2b5234fa401a",
+      "title": "Unreal Previs V1 제작",
+      "startDate": "2026-10-14",
+      "endDate": "2026-10-15",
+      "date": "2026-10-14",
+      "category": "PRODUCTION",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "CRITICAL",
+      "positions": [
+        "연출",
+        "레벨디자인",
+        "촬영",
+        "언리얼 오퍼레이터"
+      ],
+      "members": [
+        "연출",
+        "레벨디자인",
+        "촬영",
+        "언리얼 오퍼레이터"
+      ],
+      "memo": "Level 01·02 Gray Box / 연구원 Blocking / 수국·테이블 위치 / Camera / Lens / Camera Movement / Cut Timing / 환경 변화 / Level 01→02 Reveal 구현. 최종 비주얼보다 전체 영상 흐름과 촬영 설계 검증 우선."
+    },
+    {
+      "id": "11059df9-3a2c-477b-b510-2185b6a92ee5",
+      "title": "Storyboard & Previs 내부 검수",
+      "startDate": "2026-10-15",
+      "endDate": "2026-10-15",
+      "date": "2026-10-15",
+      "category": "MEETING",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "CRITICAL",
+      "positions": [
+        "전체"
+      ],
+      "members": [
+        "전체"
+      ],
+      "memo": "10/16 교수 피드백 전 전체 검수. 스토리 전달 / 러닝타임 / 연구원 동선 / 카메라 / Tracking / IC VFX / 실제 제작 가능성 확인. 수정이 필요한 Shot과 질문사항 정리."
+    },
+    {
+      "id": "70dab598-f760-49ba-8f1b-845d91713f1e",
+      "title": "Storyboard & Previs V1 DEADLINE",
+      "startDate": "2026-10-15",
+      "endDate": "2026-10-15",
+      "date": "2026-10-15",
+      "category": "DEADLINE",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "CRITICAL",
+      "positions": [
+        "전체"
+      ],
+      "members": [
+        "전체"
+      ],
+      "memo": "10/16 수업 피드백용 자료 최종 마감. Storyboard V1 / Previs V1 / Production Design V1 / IC VFX 핵심 장면 정리 완료."
+    },
+    {
+      "id": "236b23bf-bf23-466e-9726-a1c16eff8e1b",
+      "title": "REVIEW 01 — Storyboard / Previs",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-16",
+      "date": "2026-10-16",
+      "category": "FEEDBACK",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "NORMAL",
+      "positions": [
+        "전체"
+      ],
+      "members": [
+        "전체"
+      ],
+      "memo": "Storyboard V1 / Previs V1 / Production Design V1 검토. 카메라 무빙 / 촬영공간 크기 / Full Shot / Tracking / 실제·가상 경계 / IC VFX 활용 / Level 01→02 Reveal 중심으로 교수 피드백 기록."
+    },
+    {
+      "id": "4e8f08b9-bd46-428e-bbc8-857b7199689b",
+      "title": "REVIEW 01 피드백 반영",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-18",
+      "date": "2026-10-16",
+      "category": "FEEDBACK",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "positions": [
+        "전체"
+      ],
+      "members": [
+        "전체"
+      ],
+      "memo": "교수 피드백을 연출 / 레벨 / 촬영 / 아트 / Unreal 항목으로 분류. Storyboard와 Previs 수정사항 반영. 제작 전 해결해야 할 문제와 테스트가 필요한 항목 별도 정리."
+    },
+    {
+      "id": "9f2cb0ff-8911-4e1c-b80c-e76d79bd0ea2",
+      "title": "Production Design Final",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-21",
+      "date": "2026-10-17",
+      "category": "PLANNING",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "NORMAL",
+      "positions": [
+        "연출",
+        "레벨디자인",
+        "촬영",
+        "아트"
+      ],
+      "members": [
+        "연출",
+        "레벨디자인",
+        "촬영",
+        "아트"
+      ],
+      "memo": "Level 01·02 공간 구조 최종 설계. 실제 세트 / Unreal 영역 / 연구 테이블 / 수국 / 창·경계 / Observation Facility 구성 확정. 배우와 카메라 위치를 포함한 Floor Plan 제작."
+    },
+    {
+      "id": "c385749c-1820-4a25-aff4-c899744d5bed",
+      "title": "Asset & Prop List 확정",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-20",
+      "date": "2026-10-17",
+      "category": "PLANNING",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "positions": [
+        "레벨디자인",
+        "아트",
+        "언리얼 오퍼레이터"
+      ],
+      "members": [
+        "레벨디자인",
+        "아트",
+        "언리얼 오퍼레이터"
+      ],
+      "memo": "Unreal Asset / 수국 / 연구일지 / 실험도구 / 세트 구조물 / 의상 등 전체 제작요소 목록화. 구매 / 제작 / 대여 / 기존 Asset 활용 여부 및 담당자 지정."
+    },
+    {
+      "id": "b456de44-b603-428d-aabf-fd53a0a1063a",
+      "title": "Camera & Tracking Plan Final",
+      "startDate": "2026-10-18",
+      "endDate": "2026-10-21",
+      "date": "2026-10-18",
+      "category": "PLANNING",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "positions": [
+        "연출",
+        "촬영",
+        "언리얼 오퍼레이터"
+      ],
+      "members": [
+        "연출",
+        "촬영",
+        "언리얼 오퍼레이터"
+      ],
+      "memo": "각 Shot의 예상 Lens / Camera Position / Height / Movement / Actor Distance / Tracking 여부 정리. 좁은 촬영공간에서 Full Shot과 Wide Shot 구현 가능 범위 검토."
+    },
+    {
+      "id": "179cf5c5-b875-4630-bdff-8dc1267f32e1",
+      "title": "DESIGN FREEZE",
+      "startDate": "2026-10-22",
+      "endDate": "2026-10-22",
+      "date": "2026-10-22",
+      "category": "DEADLINE",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "NORMAL",
+      "positions": [
+        "전체"
+      ],
+      "members": [
+        "전체"
+      ],
+      "memo": "Story / Storyboard V2 / Previs V2 / Production Design / Level Layout / Asset & Prop List / Camera Plan / IC VFX 핵심 4컷 확정. 이후 전체 구조를 바꾸는 큰 변경 금지."
+    },
+    {
+      "id": "7f3fd136-3f44-40ea-964e-a05ad97cf6ce",
+      "title": "REVIEW 02 — Production Design Lock",
+      "startDate": "2026-10-23",
+      "endDate": "2026-10-23",
+      "date": "2026-10-23",
+      "category": "FEEDBACK",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "NORMAL",
+      "positions": [
+        "전체"
+      ],
+      "members": [
+        "전체"
+      ],
+      "memo": "최종 제작 설계 검수. Storyboard V2 / Previs V2 / Production Design / 실제·가상 세트 구분 / Camera Plan / IC VFX 4컷 확인. 피드백 이후 본 제작 단계 진입."
+    },
+    {
+      "id": "12b318c4-8211-420f-a6ce-5df5e7e89847",
+      "title": "Level 01 — Controlled Environment 제작",
+      "startDate": "2026-10-23",
+      "endDate": "2026-10-29",
+      "date": "2026-10-23",
+      "category": "PRODUCTION",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "positions": [
+        "레벨디자인",
+        "언리얼 오퍼레이터"
+      ],
+      "members": [
+        "레벨디자인",
+        "언리얼 오퍼레이터"
+      ],
+      "memo": "연구공간 Virtual Extension / 자연환경 / Terrain / Vegetation / Sky / Window View 제작. 실제 세트와 연결되는 부분 및 Camera Tracking에 따른 Perspective·Parallax 고려."
+    },
+    {
+      "id": "a2bd0a0a-0ce2-45ee-9e2d-1230067410e6",
+      "title": "Practical Set & Props 제작 1차",
+      "startDate": "2026-10-23",
+      "endDate": "2026-10-29",
+      "date": "2026-10-23",
+      "category": "PRODUCTION",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "positions": [
+        "아트"
+      ],
+      "members": [
+        "아트"
+      ],
+      "memo": "수국 / 화분 / 연구일지 / 실험도구 / 연구 테이블 Dressing / 의상 / 창·경계 구조물 제작 및 구매 시작. 실제 카메라에 노출되는 요소 우선 제작."
+    },
+    {
+      "id": "174a179b-65fa-4c30-8d7d-f040162daebc",
+      "title": "Final Previs 제작",
+      "startDate": "2026-10-23",
+      "endDate": "2026-10-29",
+      "date": "2026-10-23",
+      "category": "PRODUCTION",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "positions": [
+        "연출",
+        "레벨디자인",
+        "촬영",
+        "언리얼 오퍼레이터"
+      ],
+      "members": [
+        "연출",
+        "레벨디자인",
+        "촬영",
+        "언리얼 오퍼레이터"
+      ],
+      "memo": "확정된 Production Design 반영. 실제 촬영 기준 Camera / Lens / Actor Blocking / Camera Movement / Tracking Range / Environment Cue / IC VFX Timing 최종 검증."
+    },
+    {
+      "id": "0e8c3d14-3aa6-4cb2-8e88-bfce45364fe6",
+      "title": "REVIEW 03 — Final Previs / Production WIP",
+      "startDate": "2026-10-30",
+      "endDate": "2026-10-30",
+      "date": "2026-10-30",
+      "category": "FEEDBACK",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "positions": [
+        "전체"
+      ],
+      "members": [
+        "전체"
+      ],
+      "memo": "Final Previs / Level 01 WIP / Practical Art WIP / Camera·Tracking 설계 검수. 이후에는 스토리보다 실제 제작 결과물 중심으로 피드백 진행."
+    },
+    {
+      "id": "12f0084b-bc02-497a-8a78-2a4de1f36a27",
+      "title": "Level 01 Final Production",
+      "startDate": "2026-10-30",
+      "endDate": "2026-11-05",
+      "date": "2026-10-30",
+      "category": "PRODUCTION",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "positions": [
+        "레벨디자인",
+        "언리얼 오퍼레이터"
+      ],
+      "members": [
+        "레벨디자인",
+        "언리얼 오퍼레이터"
+      ],
+      "memo": "Landscape / Vegetation / Lighting / Sky / Virtual Extension 고도화. DAY / NIGHT / CLOUDY / RAIN 환경 상태 제작 및 촬영 카메라 기준 최적화."
+    },
+    {
+      "id": "98673693-3d9a-47be-9343-ff848504a5be",
+      "title": "IC VFX Environment Reaction System",
+      "startDate": "2026-10-30",
+      "endDate": "2026-11-05",
+      "date": "2026-10-30",
+      "category": "PRODUCTION",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "positions": [
+        "연출",
+        "레벨디자인",
+        "언리얼 오퍼레이터"
+      ],
+      "members": [
+        "연출",
+        "레벨디자인",
+        "언리얼 오퍼레이터"
+      ],
+      "memo": "연구원 상태에 따라 수국·조명·날씨·자연환경이 변화하도록 연출. NORMAL → UNEASY → STRESS → ERROR 단계별 상태 구현."
+    },
+    {
+      "id": "0b0a9cf0-dbf3-48ec-9d7c-9308d8fca9c8",
+      "title": "Practical Art 제작 2차",
+      "startDate": "2026-10-30",
+      "endDate": "2026-11-05",
+      "date": "2026-10-30",
+      "category": "PRODUCTION",
+      "startTime": "",
+      "endTime": "",
+      "status": "NOT STARTED",
+      "priority": "HIGH",
+      "positions": [
+        "아트"
+      ],
+      "members": [
+        "아트"
+      ],
+      "memo": "1차 제작물 수정 및 실제 촬영용 퀄리티 확보. 수국 / 연구일지 / 연구도구 / 의상 / 테이블 / 경계 구조물 실물 확보 및 카메라 테스트 준비."
+    }
+  ],
+  "memos": {}
+}

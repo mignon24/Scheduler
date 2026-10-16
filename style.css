@@ -1470,6 +1470,9 @@ body.role-viewer #deleteBtn {
 body.role-viewer #saveScheduleBtn {
   display: none !important;
 }
+body.role-viewer #exportJsonBtn {
+  display: none !important;
+}
 body.role-viewer .day-modal-empty #emptyAddBtn {
   display: none !important;
 }

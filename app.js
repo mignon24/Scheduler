@@ -698,6 +698,7 @@
     nextMonthBtn: $("nextMonthBtn"),
     todayBtn: $("todayBtn"),
     exportBtn: $("exportBtn"),
+    exportJsonBtn: $("exportJsonBtn"),
     importBtn: $("importBtn"),
     importFileInput: $("importFileInput"),
     addScheduleBtn: $("addScheduleBtn"),
@@ -789,9 +790,10 @@
   function saveEvents() {
     if (state.role !== "admin") return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state.events));
+    localStorage.setItem("observation_events_updated_at", String(Date.now()));
   }
 
-  function exportData() {
+  async function exportData() {
     let memos = {};
     try {
       memos = JSON.parse(localStorage.getItem(MEMO_STORAGE_KEY) || "{}");
@@ -799,20 +801,87 @@
 
     const payload = {
       version: "1.0",
-      exportDate: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       events: state.events,
       memos: memos
     };
 
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const jsonStr = JSON.stringify(payload, null, 2);
+
+    // Modern File System Access API
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: "events.json",
+          types: [{
+            description: "JSON Data File",
+            accept: { "application/json": [".json"] }
+          }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(jsonStr);
+        await writable.close();
+        alert("✅ events.json 파일이 성공적으로 저장되었습니다!\n\n터미널에서 아래 명령어로 깃허브에 push하시면 모든 기기에 일정이 반영됩니다:\ngit add events.json; git commit -m \"Update schedule\"; git push origin main");
+        return;
+      } catch (err) {
+        if (err.name === "AbortError") return;
+      }
+    }
+
+    // Fallback standard download
+    const blob = new Blob([jsonStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `planner-backup-${toDateString(new Date())}.json`;
+    a.download = "events.json";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    alert("✅ events.json 파일이 다운로드되었습니다!\n\n1. 다운로드된 events.json 파일을 Scheduler 폴더에 덮어써주세요.\n2. 터미널에서 'git push origin main'을 실행하시면 모든 기기 및 구경자에게 최신 일정이 배포됩니다!");
+  }
+
+  async function loadRemoteEvents() {
+    try {
+      const res = await fetch("./events.json?t=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      const remoteEvents = Array.isArray(data) ? data : data.events;
+      if (Array.isArray(remoteEvents) && remoteEvents.length > 0) {
+        const normalized = remoteEvents.map(event => {
+          const start = event.startDate || event.date || toDateString(new Date());
+          const end = event.endDate || event.startDate || event.date || start;
+          return {
+            ...event,
+            startDate: start,
+            endDate: end,
+            positions: event.positions || event.members || ["전체"],
+            category: categories[event.category] ? event.category : "MEETING"
+          };
+        });
+
+        const remoteUpdated = data.updatedAt ? new Date(data.updatedAt).getTime() : 0;
+        const localUpdated = Number(localStorage.getItem("observation_events_updated_at") || "0");
+
+        // 구경자 모드이거나, 원격 데이터가 더 최신이거나, 로컬 스토리지에 데이터가 없으면 원격 데이터 적용
+        const shouldApply = (state.role === "viewer") || (remoteUpdated >= localUpdated) || (!localStorage.getItem(STORAGE_KEY));
+
+        if (shouldApply) {
+          state.events = normalized;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state.events));
+          if (remoteUpdated) {
+            localStorage.setItem("observation_events_updated_at", String(remoteUpdated));
+          }
+          if (data.memos && typeof data.memos === "object") {
+            localStorage.setItem(MEMO_STORAGE_KEY, JSON.stringify(data.memos));
+            initPaperMemos();
+          }
+          render();
+        }
+      }
+    } catch (err) {
+      console.warn("Could not fetch remote events.json", err);
+    }
   }
 
   function importData(file) {
@@ -1814,6 +1883,9 @@
     if (els.exportBtn) {
       els.exportBtn.addEventListener("click", exportData);
     }
+    if (els.exportJsonBtn) {
+      els.exportJsonBtn.addEventListener("click", exportData);
+    }
 
     if (els.importBtn) {
       els.importBtn.addEventListener("click", () => {
@@ -1925,6 +1997,7 @@
       if (els.authRoleLabel) els.authRoleLabel.textContent = "ADMIN (수정 모드)";
       if (els.authSwitchBtn) els.authSwitchBtn.classList.add("hidden");
       if (els.authLogoutBtn) els.authLogoutBtn.classList.remove("hidden");
+      if (els.exportJsonBtn) els.exportJsonBtn.classList.remove("hidden");
       if (els.addScheduleBtn) els.addScheduleBtn.classList.remove("hidden");
     } else if (role === "viewer") {
       document.body.classList.add("role-viewer");
@@ -1933,6 +2006,7 @@
       if (els.authRoleLabel) els.authRoleLabel.textContent = "VIEW ONLY (구경 모드)";
       if (els.authSwitchBtn) els.authSwitchBtn.classList.remove("hidden");
       if (els.authLogoutBtn) els.authLogoutBtn.classList.remove("hidden");
+      if (els.exportJsonBtn) els.exportJsonBtn.classList.add("hidden");
       if (els.addScheduleBtn) els.addScheduleBtn.classList.add("hidden");
     }
 
@@ -2060,4 +2134,5 @@
   initPaperMemos();
   initAuth();
   render();
+  loadRemoteEvents();
 })();
